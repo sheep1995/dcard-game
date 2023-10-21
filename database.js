@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 var config = {
     user: process.env.DB_USER,
@@ -19,7 +19,7 @@ else {
 }
 
 let connection = mysql.createConnection(config);
-
+let promiseConnect = connection.promise();
 connection.connect(function(err) {
   if (err) {
     console.error('Error connecting: ' + err.stack);
@@ -28,4 +28,4 @@ connection.connect(function(err) {
   console.log('Connected as thread id: ' + connection.threadId);
 });
 
-module.exports = connection;
+module.exports = promiseConnect;
