@@ -1,4 +1,5 @@
 const mysql = require('mysql2');
+require('dotenv').config()
 
 var config = {
     user: process.env.DB_USER,

@@ -13,14 +13,16 @@ app.get('/', (req, res) => {
 })
 
 app.get('/login', async(req, res) => {
-    const { memberId, exp} = await jwe.decrypt(req.query.token);
+
+    const { memberId, exp} = await jwe.decrypt(req.query.user);
+
     if(memberId == undefined){
         res.status(400).send({
             errorMessage: 'Invalid token'
         })
         return 1;
     }
-    if(exp<Date.now()/1000){
+    if(exp<Math.floor(Date.now()/1000)){
         res.status(403).send({
             errorMessage: 'token expired'
         })
@@ -30,6 +32,7 @@ app.get('/login', async(req, res) => {
         memberId: memberId
     })
     return 0;
+    
 });
 
 // 取得會員資料
@@ -50,7 +53,7 @@ app.get('/member/:memberId', async(req, res) => {
         "SELECT * FROM `acme`.`UserData` WHERE memberId = ?", memberId
     );
     if(rows1.length==0){
-        res.status(400).send({
+        res.status(401).send({
             errorMessage: 'the memberId not found'
         });
         return 1;
@@ -106,12 +109,27 @@ app.post('/member/:memberId/gameSettle', async(req, res) => {
       slingshot = CASE WHEN (slingshot + ?) > 0 THEN (slingshot + ?) ELSE 0 END,
       marble = CASE WHEN (marble + ?) > 0 THEN (marble + ?) ELSE 0 END
     WHERE memberId = ?`
-    await connection.query( sql, 
+    let [rows] = await connection.query( sql, 
         [ coin, coin, bomb, bomb, controller, controller, 
           slingshot, slingshot, marble, marble, memberId ]);
     
+    console.log('debug', rows);
+    if(rows.affectedRows === 0){
+        res.status(401).send({
+            errorMessage: 'the memberId not found'
+        })
+        return 1;
+    }
+
+    const generateUniqueID = () => {
+        const timestamp = new Date().getTime();
+        const randomDigits = Math.floor(Math.random() * 1000000000);
+        const uniqueID = `${timestamp}${randomDigits.toString().padStart(9, '0')}`;
+      
+        return uniqueID;
+    }
     const data = {
-        roundId: 'game-0012',
+        roundId: generateUniqueID(),
         memberId: memberId,
         createTime: new Date().toISOString().slice(0, 19).replace('T', ' '),
         mode: mode,
@@ -228,10 +246,8 @@ app.get('/member/:memberId/ranking', async(req, res) => {
         dataMode1.averageTime = parseInt(mappedRows4[0].averageTime)
         dataMode2.averageTime = parseInt(mappedRows4[1].averageTime)
         dataMode3.averageTime = parseInt(mappedRows4[2].averageTime)
+        
         let [rows5] = results[4];
-        let index = rows5.findIndex((element) => {
-            return element.mode==1
-        });
         const mappedRows5 = desiredModes.map((desiredMode) => {
             const foundItem = rows5.find((item) => item.mode === desiredMode);
             if (foundItem) {
@@ -249,9 +265,11 @@ app.get('/member/:memberId/ranking', async(req, res) => {
     })
     .catch(error => {
         console.error('At least one promise was rejected:', error);
+        res.status(500).send({
+            errorMessage: 'server error'
+        })
+        return 1;
     });
-    
-    
     
 });
 
