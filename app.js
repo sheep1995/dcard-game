@@ -14,7 +14,14 @@ app.get('/', (req, res) => {
 
 app.get('/login', async(req, res) => {
 
-    const { memberId, exp} = await jwe.decrypt(req.query.user);
+    const user = req.query.user;
+    if(!user){
+        res.status(400).send({
+            errorMessage: 'Missing parameters'
+        })
+        return 1;
+    }
+    const { memberId, exp} = await jwe.decrypt(user);
 
     if(memberId == undefined){
         res.status(400).send({

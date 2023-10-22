@@ -32,7 +32,7 @@ module.exports = {
             return user;
         } catch (error) {
             console.error(error);
-            return {memberId: 'test-member-06', exp: 1699999999};
+            return {};
         }
         
     }
