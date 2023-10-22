@@ -50,7 +50,7 @@ app.get('/member/:memberId', async(req, res) => {
     let response;
 
     let [rows1] = await connection.query(
-        "SELECT * FROM `acme`.`UserData` WHERE memberId = ?", memberId
+        "SELECT * FROM UserData WHERE memberId = ?", memberId
     );
     if(rows1.length==0){
         res.status(401).send({
@@ -66,11 +66,11 @@ app.get('/member/:memberId', async(req, res) => {
     switch (mode) {
         case '1':
         case '2': {
-            sql = "SELECT MAX(score) FROM `acme`.`GameRecord` WHERE memberId = ? AND mode = ?"
+            sql = "SELECT MAX(score) FROM GameRecord WHERE memberId = ? AND mode = ?"
             break;
         }
         case '3': {
-            sql = "SELECT MIN(seconds) FROM `acme`.`GameRecord` WHERE memberId = ? AND mode = ?"
+            sql = "SELECT MIN(seconds) FROM GameRecord WHERE memberId = ? AND mode = ?"
             break;
         }
         default: {
