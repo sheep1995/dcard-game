@@ -28,6 +28,10 @@ app.get('/login', async(req, res) => {
         })
         return 1;
     }
+
+    sql = "INSERT INTO UserData VALUES (?, CURRENT_TIMESTAMP, 0, 0, 0, 0, 0);"
+    await connection.query(sql, memberId);
+
     res.status(200).send({
         memberId: memberId
     })
