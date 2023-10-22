@@ -124,7 +124,7 @@ app.post('/member/:memberId/gameSettle', async(req, res) => {
     const generateUniqueID = () => {
         const timestamp = new Date().getTime();
         const randomDigits = Math.floor(Math.random() * 1000000000);
-        const uniqueID = `${timestamp}${randomDigits.toString().padStart(9, '0')}`;
+        const uniqueID = `${String(timestamp).substring(3, 13)}${randomDigits.toString().padStart(9, '0')}`;
       
         return uniqueID;
     }
