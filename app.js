@@ -8,11 +8,11 @@ const connection = require('./database');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/api', (req, res) => {
+app.get('/', (req, res) => {
     res.send('Dcard-game-server')
 })
 
-app.get('/api/login', async(req, res) => {
+app.get('/login', async(req, res) => {
 
     const { memberId, exp} = await jwe.decrypt(req.query.user);
 
@@ -36,7 +36,7 @@ app.get('/api/login', async(req, res) => {
 });
 
 // 取得會員資料
-app.get('/api/member/:memberId', async(req, res) => {
+app.get('/member/:memberId', async(req, res) => {
     
     const memberId = req.params.memberId;
     const mode = req.query.mode;
@@ -90,7 +90,7 @@ app.get('/api/member/:memberId', async(req, res) => {
 
 
 // 遊戲結算
-app.post('/api/member/:memberId/gameSettle', async(req, res) => {
+app.post('/member/:memberId/gameSettle', async(req, res) => {
     
     const memberId = req.params.memberId;
     const {coin, bomb, controller, slingshot, marble, score, time, mode} = req.body;
@@ -144,7 +144,7 @@ app.post('/api/member/:memberId/gameSettle', async(req, res) => {
 });
 
 // 取得會員排行榜
-app.get('/api/member/:memberId/ranking', async(req, res) => {
+app.get('/member/:memberId/ranking', async(req, res) => {
     
     const memberId = req.params.memberId;
 
