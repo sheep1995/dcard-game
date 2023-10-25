@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const jwe = require('./jwe')
 const app = express()
-const port = 8000
+const port = 3000
 const connection = require('./database');
 
 app.use(bodyParser.json());
