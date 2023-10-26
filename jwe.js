@@ -20,20 +20,21 @@ module.exports = {
     },
 
     decrypt: async function(token){
+        let user = {};
         try {
+            console.log(process.env.Game_Secret);
+            console.log(token);
             const key = Buffer.from(process.env.Game_Secret)
             const { plaintext } = await jose.compactDecrypt(token, key, {
                 maxPBES2Count: 100000,
                 keyManagementAlgorithms: ['PBES2-HS256+A128KW'],
                 contentEncryptionAlgorithms: ['A128CBC-HS256']
             })
-            const user = new TextDecoder().decode(plaintext)
-            console.log(user)
-            return user;
+            user = new TextDecoder().decode(plaintext)
         } catch (error) {
             console.error(error);
-            return {};
         }
-        
+        console.log(user)
+        return JSON.parse(user);
     }
 }
