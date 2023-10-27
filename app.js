@@ -51,7 +51,7 @@ app.get('/member/:memberId', async(req, res) => {
     
     const memberId = req.params.memberId;
     const mode = req.query.mode;
-    if(!memberId || !mode){
+    if(!memberId){
         res.status(400).send({
             errorMessage: 'Missing parameters'
         })
@@ -73,6 +73,11 @@ app.get('/member/:memberId', async(req, res) => {
     delete response.createTime;
     delete response.loginTime;
 
+    if (mode == undefined){
+        console.log(response);
+        res.json(response);
+    }
+
     let sql;
     switch (mode) {
         case '1':
@@ -91,7 +96,7 @@ app.get('/member/:memberId', async(req, res) => {
 
     let [rows2] = await connection.query(sql, [memberId, mode]);
     if (Object.keys(rows2[0]).includes('MIN(seconds)')){
-        response['bestTime'] = rows2[0]['MIN(seconds)'] || -1;
+        response['bestScore'] = rows2[0]['MIN(seconds)'] || -1;
     } else {
         response['bestScore'] = rows2[0]['MAX(score)'] || -1;
     }
