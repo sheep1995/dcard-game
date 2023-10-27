@@ -153,8 +153,33 @@ app.post('/member/:memberId/gameSettle', async(req, res) => {
         seconds: time
     }
     await connection.query('INSERT INTO GameRecord SET ?', data)
+
+    switch (mode) {
+        case 1:
+        case 2:{
+            sql = `SELECT MAX(score) AS bestScore
+            FROM GameRecord
+            WHERE memberId = ?
+            AND mode = ?`
+            break;
+        }
+
+        case 3:{
+            sql = `SELECT MIN(seconds) AS bestScore
+            FROM GameRecord
+            WHERE memberId = ?
+            AND mode = ?`
+            break;
+        }
+            
+        default:
+            break;
+    }
+
+    let [rows2] = await connection.query(sql, [memberId, mode]);
+
     res.status(200).json({ 
-        message: 'Data received successfully'
+        bestScore: rows2.bestScore
     });
     return 0;
 });
@@ -246,7 +271,7 @@ app.get('/member/:memberId/ranking', async(req, res) => {
         let [rows3] = results[2];
         let dataMode3 = {
             mode: 3,
-            bestTime: rows3[0]==undefined? -1 : rows3[0].min_time,
+            bestScore: rows3[0]==undefined? -1 : rows3[0].min_time,
             ranking: rows3[0]==undefined? -1 : rows3[0].user_rank
         }
         let [rows4] = results[3];
