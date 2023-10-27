@@ -155,8 +155,8 @@ app.post('/member/:memberId/gameSettle', async(req, res) => {
     await connection.query('INSERT INTO GameRecord SET ?', data)
 
     switch (mode) {
-        case 1:
-        case 2:{
+        case '1':
+        case '2':{
             sql = `SELECT MAX(score) AS bestScore
             FROM GameRecord
             WHERE memberId = ?
@@ -164,7 +164,7 @@ app.post('/member/:memberId/gameSettle', async(req, res) => {
             break;
         }
 
-        case 3:{
+        case '3':{
             sql = `SELECT MIN(seconds) AS bestScore
             FROM GameRecord
             WHERE memberId = ?
@@ -177,9 +177,9 @@ app.post('/member/:memberId/gameSettle', async(req, res) => {
     }
 
     let [rows2] = await connection.query(sql, [memberId, mode]);
-
+    console.log(rows2);
     res.status(200).json({ 
-        bestScore: rows2.bestScore
+        bestScore: rows2.bestScore||-1
     });
     return 0;
 });
