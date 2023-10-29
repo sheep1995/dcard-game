@@ -177,9 +177,9 @@ app.post('/member/:memberId/gameSettle', async(req, res) => {
     }
 
     let [rows2] = await connection.query(sql, [memberId, mode]);
-    console.log(rows2);
+    console.log(rows2[0]);
     res.status(200).json({ 
-        bestScore: rows2.bestScore||-1
+        bestScore: rows2[0].bestScore||-1
     });
     return 0;
 });
