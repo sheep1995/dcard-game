@@ -154,6 +154,7 @@ app.post('/member/:memberId/gameSettle', async(req, res) => {
     }
     await connection.query('INSERT INTO GameRecord SET ?', data)
 
+    mode = parseInt(mode);
     switch (mode) {
         case 1:
         case 2:{
