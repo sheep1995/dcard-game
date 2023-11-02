@@ -320,3 +320,11 @@ app.get('/member/:memberId/ranking', async(req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+app.use((err, req, res, next) => {
+    // Handle the error
+    console.error(err.stack);
+  
+    // Send an error response to the client
+    res.status(500).json({ error: 'server error' });
+  });
