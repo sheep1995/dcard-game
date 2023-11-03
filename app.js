@@ -23,7 +23,7 @@ app.get('', (req, res) => {
     res.send('Dcard-game-server')
 })
 
-app.get('/login', async(req, res) => {
+app.get('/login', asyncHandler(async(req, res) => {
 
     const user = req.query.user;
     if(!user){
@@ -55,10 +55,10 @@ app.get('/login', async(req, res) => {
     })
     return 0;
     
-});
+}));
 
 // 取得會員資料
-app.get('/member/:memberId', async(req, res) => {
+app.get('/member/:memberId', asyncHandler(async(req, res) => {
     
     const memberId = req.params.memberId;
     const mode = req.query.mode;
@@ -87,7 +87,7 @@ app.get('/member/:memberId', async(req, res) => {
     if (mode == undefined){
         console.log(response);
         res.json(response);
-        return 0
+        //return 0
     }
 
     let sql;
@@ -114,11 +114,11 @@ app.get('/member/:memberId', async(req, res) => {
     }
     console.log(response);
     res.json(response);
-});
+}));
 
 
 // 遊戲結算
-app.post('/member/:memberId/gameSettle', async(req, res) => {
+app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
     
     const memberId = req.params.memberId;
     const {coin, bomb, controller, slingshot, marble, score, time, mode} = req.body;
@@ -197,10 +197,10 @@ app.post('/member/:memberId/gameSettle', async(req, res) => {
         bestScore: rows2[0].bestScore||-1
     });
     return 0;
-});
+}));
 
 // 取得會員排行榜
-app.get('/member/:memberId/ranking', async(req, res) => {
+app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
     
     const memberId = req.params.memberId;
 
@@ -327,7 +327,7 @@ app.get('/member/:memberId/ranking', async(req, res) => {
         return 1;
     });
     
-});
+}));
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
