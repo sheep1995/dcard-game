@@ -109,7 +109,6 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
     }
     console.log(response);
     res.json(response);
-    throw new Error("Something went wrong!");
 }));
 
 
