@@ -14,11 +14,6 @@ const asyncHandler = fn => (req, res, next) => {
         .catch(next);
 };
 
-app.get('/test', asyncHandler(async (req, res) => {
-    throw new Error("Something went wrong!");
-}));
-
-
 app.get('', (req, res) => {
     res.send('Dcard-game-server')
 })
@@ -87,7 +82,7 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
     if (mode == undefined){
         console.log(response);
         res.json(response);
-        //return 0
+        return 0
     }
 
     let sql;
@@ -114,6 +109,7 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
     }
     console.log(response);
     res.json(response);
+    throw new Error("Something went wrong!");
 }));
 
 
