@@ -8,6 +8,17 @@ const connection = require('./database');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const asyncHandler = fn => (req, res, next) => {
+    return Promise
+        .resolve(fn(req, res, next))
+        .catch(next);
+};
+
+app.get('/test', asyncHandler(async (req, res) => {
+    throw new Error("Something went wrong!");
+}));
+
+
 app.get('', (req, res) => {
     res.send('Dcard-game-server')
 })
@@ -76,6 +87,7 @@ app.get('/member/:memberId', async(req, res) => {
     if (mode == undefined){
         console.log(response);
         res.json(response);
+        return 0
     }
 
     let sql;
