@@ -3,10 +3,18 @@ const bodyParser = require('body-parser');
 const jwe = require('./jwe')
 const app = express()
 const port = 3000
-const connection = require('./database');
+//const connection = require('./database');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+const mysql = require ('mysql2') ; 
+const connectionPromise = mysql.createConnection({
+    user: process.env.DB_USER,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASS,
+    host: process.env.DB_HOST
+}) ; 
+const connection = connectionPromise.promise();
 
 const asyncHandler = fn => (req, res, next) => {
     connection.end();
