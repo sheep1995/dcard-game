@@ -8,19 +8,19 @@ const port = 3000
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const mysql = require ('mysql2') ; 
-const connectionPromise = mysql.createConnection({
-    user: process.env.DB_USER,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASS,
-    host: process.env.DB_HOST
-}) ; 
-const connection = connectionPromise.promise();
+// const connectionPromise = mysql.createConnection({
+//     user: process.env.DB_USER,
+//     database: process.env.DB_NAME,
+//     password: process.env.DB_PASS,
+//     host: process.env.DB_HOST
+// }) ; 
+// const connection = connectionPromise.promise();
 
-const asyncHandler = fn => (req, res, next) => {
-    return Promise
-        .resolve(fn(req, res, next))
-        .catch(next);
-};
+// const asyncHandler = fn => (req, res, next) => {
+//     return Promise
+//         .resolve(fn(req, res, next))
+//         .catch(next);
+// };
 
 app.get('', (req, res) => {
     res.send('Dcard-game-server')
@@ -48,14 +48,21 @@ app.get('/login', asyncHandler(async(req, res) => {
         })
         return 1;
     }
-    connection.destroy();
+
+    const connectionPromise = mysql.createConnection({
+        user: process.env.DB_USER,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASS,
+        host: process.env.DB_HOST
+    }) ; 
+    const connection = connectionPromise.promise();
+
     sql = "INSERT IGNORE INTO UserData VALUES (?, CURRENT_TIMESTAMP, 0, 0, 0, 0, 0);"
     await connection.query(sql, memberId);
 
     res.status(200).send({
         memberId: memberId
     })
-    connection.end();
     return 0;
     
 }));
@@ -69,7 +76,6 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
         res.status(400).send({
             errorMessage: 'Missing parameters'
         })
-        connection.end();
         return 1;
     }
 
@@ -82,7 +88,6 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
         res.status(401).send({
             errorMessage: 'the memberId not found'
         });
-        connection.end();
         return 1;
     }
     response = rows1[0];
@@ -92,7 +97,6 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
     if (mode == undefined){
         console.log(response);
         res.json(response);
-        connection.end();
         return 0
     }
 
@@ -120,7 +124,6 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
     }
     console.log(response);
     res.json(response);
-    connection.end();
 }));
 
 
@@ -133,7 +136,6 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
         res.status(400).send({
             errorMessage: 'Missing parameters'
         })
-        connection.end();
         return 1;
     }
 
@@ -154,7 +156,6 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
         res.status(401).send({
             errorMessage: 'the memberId not found'
         })
-        connection.end();
         return 1;
     }
 
@@ -205,7 +206,6 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
     res.status(200).json({ 
         bestScore: rows2[0].bestScore||-1
     });
-    connection.end();
     return 0;
 }));
 
@@ -218,7 +218,6 @@ app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
         res.status(400).send({
             errorMessage: 'Missing parameters'
         })
-        connection.end();
         return 1;
     }
 
@@ -335,7 +334,6 @@ app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
         res.status(500).send({
             errorMessage: 'server error'
         })
-        connection.end();
         return 1;
     });
     
@@ -348,7 +346,6 @@ app.listen(port, () => {
 app.use((err, req, res, next) => {
     // Handle the error
     console.error(err.stack);
-    connection.end();
     // Send an error response to the client
     res.status(500).json({ error: 'server error' });
   });
