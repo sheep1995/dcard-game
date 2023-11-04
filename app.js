@@ -3,30 +3,23 @@ const bodyParser = require('body-parser');
 const jwe = require('./jwe')
 const app = express()
 const port = 3000
-//const connection = require('./database');
+const connection = require('./database');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-const mysql = require ('mysql2') ; 
-// const connectionPromise = mysql.createConnection({
-//     user: process.env.DB_USER,
-//     database: process.env.DB_NAME,
-//     password: process.env.DB_PASS,
-//     host: process.env.DB_HOST
-// }) ; 
-// const connection = connectionPromise.promise();
 
-// const asyncHandler = fn => (req, res, next) => {
-//     return Promise
-//         .resolve(fn(req, res, next))
-//         .catch(next);
-// };
+const asyncHandler = fn => (req, res, next) => {
+    return Promise
+        .resolve(fn(req, res, next))
+        .catch(next);
+};
 
 app.get('', (req, res) => {
     res.send('Dcard-game-server')
 })
 
 app.get('/login', asyncHandler(async(req, res) => {
+
     const user = req.query.user;
     if(!user){
         res.status(400).send({
@@ -48,14 +41,6 @@ app.get('/login', asyncHandler(async(req, res) => {
         })
         return 1;
     }
-
-    const connectionPromise = mysql.createConnection({
-        user: process.env.DB_USER,
-        database: process.env.DB_NAME,
-        password: process.env.DB_PASS,
-        host: process.env.DB_HOST
-    }) ; 
-    const connection = connectionPromise.promise();
 
     sql = "INSERT IGNORE INTO UserData VALUES (?, CURRENT_TIMESTAMP, 0, 0, 0, 0, 0);"
     await connection.query(sql, memberId);
@@ -346,6 +331,7 @@ app.listen(port, () => {
 app.use((err, req, res, next) => {
     // Handle the error
     console.error(err.stack);
+  
     // Send an error response to the client
     res.status(500).json({ error: 'server error' });
   });
