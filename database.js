@@ -1,4 +1,4 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 require('dotenv').config()
 
 var config = {
@@ -19,7 +19,7 @@ else {
   config.host = process.env.DB_HOST;
 }
 
-let connection = mysql.createConnection(config);
+let connection = await mysql.createConnection(config);
 let promiseConnect = connection.promise();
 connection.connect(function(err) {
   if (err) {
@@ -30,4 +30,4 @@ connection.connect(function(err) {
   console.log('Connected as thread id: ' + connection.threadId);
 });
 
-module.exports = promiseConnect;
+module.exports = connection;
