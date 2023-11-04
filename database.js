@@ -19,7 +19,7 @@ else {
   config.host = process.env.DB_HOST;
 }
 
-let connection = await mysql.createConnection(config);
+let connection = mysql.createConnection(config);
 let promiseConnect = connection.promise();
 connection.connect(function(err) {
   if (err) {
