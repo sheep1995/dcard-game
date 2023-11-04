@@ -17,7 +17,6 @@ const connectionPromise = mysql.createConnection({
 const connection = connectionPromise.promise();
 
 const asyncHandler = fn => (req, res, next) => {
-    connection.end();
     return Promise
         .resolve(fn(req, res, next))
         .catch(next);
@@ -28,7 +27,6 @@ app.get('', (req, res) => {
 })
 
 app.get('/login', asyncHandler(async(req, res) => {
-
     const user = req.query.user;
     if(!user){
         res.status(400).send({
@@ -50,7 +48,7 @@ app.get('/login', asyncHandler(async(req, res) => {
         })
         return 1;
     }
-
+    connection.destroy();
     sql = "INSERT IGNORE INTO UserData VALUES (?, CURRENT_TIMESTAMP, 0, 0, 0, 0, 0);"
     await connection.query(sql, memberId);
 
