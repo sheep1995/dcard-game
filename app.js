@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const asyncHandler = fn => (req, res, next) => {
+    connection.end();
     return Promise
         .resolve(fn(req, res, next))
         .catch(next);
