@@ -49,6 +49,7 @@ app.get('/login', asyncHandler(async(req, res) => {
     res.status(200).send({
         memberId: memberId
     })
+    connection.end();
     return 0;
     
 }));
@@ -62,6 +63,7 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
         res.status(400).send({
             errorMessage: 'Missing parameters'
         })
+        connection.end();
         return 1;
     }
 
@@ -74,6 +76,7 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
         res.status(401).send({
             errorMessage: 'the memberId not found'
         });
+        connection.end();
         return 1;
     }
     response = rows1[0];
@@ -83,6 +86,7 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
     if (mode == undefined){
         console.log(response);
         res.json(response);
+        connection.end();
         return 0
     }
 
@@ -110,6 +114,7 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
     }
     console.log(response);
     res.json(response);
+    connection.end();
 }));
 
 
@@ -122,6 +127,7 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
         res.status(400).send({
             errorMessage: 'Missing parameters'
         })
+        connection.end();
         return 1;
     }
 
@@ -142,6 +148,7 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
         res.status(401).send({
             errorMessage: 'the memberId not found'
         })
+        connection.end();
         return 1;
     }
 
@@ -192,6 +199,7 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
     res.status(200).json({ 
         bestScore: rows2[0].bestScore||-1
     });
+    connection.end();
     return 0;
 }));
 
@@ -204,6 +212,7 @@ app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
         res.status(400).send({
             errorMessage: 'Missing parameters'
         })
+        connection.end();
         return 1;
     }
 
@@ -320,6 +329,7 @@ app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
         res.status(500).send({
             errorMessage: 'server error'
         })
+        connection.end();
         return 1;
     });
     
@@ -332,7 +342,7 @@ app.listen(port, () => {
 app.use((err, req, res, next) => {
     // Handle the error
     console.error(err.stack);
-  
+    connection.end();
     // Send an error response to the client
     res.status(500).json({ error: 'server error' });
   });
