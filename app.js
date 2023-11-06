@@ -8,7 +8,7 @@ const connection = require('./database');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const asyncHandler = fn => (req, res, next) => {
+const asyncHandler = fn => async(req, res, next) => {
     return Promise
         .resolve(fn(req, res, next))
         .catch(next);
