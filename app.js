@@ -221,8 +221,7 @@ app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
       )
     SELECT memberId, max_score, user_rank
     FROM RankedScores
-    WHERE memberId = ?
-    AND score >= 2000;`;
+    WHERE memberId = ?;`;
 
     const sql_mode2_rank = `WITH RankedScores AS (
         SELECT
@@ -244,6 +243,7 @@ app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
           DENSE_RANK() OVER (ORDER BY MIN(seconds) DESC) AS user_rank
         FROM GameRecord
         WHERE mode = 3
+        AND score >= 2000
         GROUP BY memberId
       )
     SELECT memberId, min_time, user_rank
