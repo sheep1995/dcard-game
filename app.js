@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const jwe = require('./jwe')
 const app = express()
 const port = 3000
-const connection = require('./database');
+//const connection = require('./database');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

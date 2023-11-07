@@ -23,7 +23,6 @@ let connection = mysql.createConnection(config);
 let promiseConnect = connection.promise();
 connection.connect(function(err) {
   if (err) {
-    connection.end();
     console.error('Error connecting: ' + err.stack);
     return;
   }
