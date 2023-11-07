@@ -47,6 +47,7 @@ app.get('/login', asyncHandler(async(req, res) => {
     sql = "INSERT IGNORE INTO UserData VALUES (?, CURRENT_TIMESTAMP, 0, 0, 0, 0, 0);"
     await connection.query(sql, memberId);
 
+    console.log('memberId', memberId);
     res.status(200).send({
         memberId: memberId
     })
@@ -109,7 +110,7 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
     } else {
         response['bestScore'] = rows2[0]['MAX(score)'] || -1;
     }
-    console.log(response);
+    console.log('userInfo', response);
     res.json(response);
 }));
 
@@ -190,6 +191,7 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
 
     let [rows2] = await connection.query(sql, [memberId, mode]);
     console.log(rows2[0]);
+    console.log('gameSettel', rows2[0].bestScore);
     res.status(200).json({ 
         bestScore: rows2[0].bestScore||-1
     });
@@ -314,6 +316,7 @@ app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
         dataMode3.playTimes = mappedRows5[2].playTimes
         let response = [dataMode1, dataMode2, dataMode3];
         console.log('All promises resolved:', rows5);
+        console.log('ranking', response);
         res.status(200).json(response);
     })
     .catch(error => {
