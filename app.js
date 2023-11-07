@@ -221,7 +221,8 @@ app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
       )
     SELECT memberId, max_score, user_rank
     FROM RankedScores
-    WHERE memberId = ?;`;
+    WHERE memberId = ?
+    AND score >= 2000;`;
 
     const sql_mode2_rank = `WITH RankedScores AS (
         SELECT
