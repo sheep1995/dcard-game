@@ -5,6 +5,16 @@ const jwe = require('./jwe')
 const app = express()
 const port = 3000
 const connection = require('./database');
+const mysql = require('mysql2');
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+});
+const promisePool = pool.promise();
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -45,7 +55,7 @@ app.get('/login', asyncHandler(async(req, res) => {
     }
 
     sql = "INSERT IGNORE INTO UserData VALUES (?, CURRENT_TIMESTAMP, 0, 0, 0, 0, 0);"
-    await connection.query(sql, memberId);
+    await promisePool.query(sql, memberId);
 
     console.log('memberId', memberId);
     res.status(200).send({
@@ -69,7 +79,7 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
 
     let response;
 
-    let [rows1] = await connection.query(
+    let [rows1] = await promisePool.query(
         "SELECT * FROM UserData WHERE memberId = ?", memberId
     );
     if(rows1.length==0){
@@ -104,7 +114,7 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
         }   
     }
 
-    let [rows2] = await connection.query(sql, [memberId, mode]);
+    let [rows2] = await promisePool.query(sql, [memberId, mode]);
     if (Object.keys(rows2[0]).includes('MIN(seconds)')){
         response['bestScore'] = rows2[0]['MIN(seconds)'] || -1;
     } else {
@@ -135,7 +145,7 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
       slingshot = CASE WHEN (slingshot + ?) > 0 THEN (slingshot + ?) ELSE 0 END,
       marble = CASE WHEN (marble + ?) > 0 THEN (marble + ?) ELSE 0 END
     WHERE memberId = ?`
-    let [rows] = await connection.query( sql, 
+    let [rows] = await promisePool.query( sql, 
         [ coin, coin, bomb, bomb, controller, controller, 
           slingshot, slingshot, marble, marble, memberId ]);
     
@@ -162,7 +172,7 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
         score: score,
         seconds: time
     }
-    await connection.query('INSERT INTO GameRecord SET ?', data)
+    await promisePool.query('INSERT INTO GameRecord SET ?', data)
 
     switch (mode) {
         case '1':
@@ -189,7 +199,7 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
             break;
     }
 
-    let [rows2] = await connection.query(sql, [memberId, mode]);
+    let [rows2] = await promisePool.query(sql, [memberId, mode]);
     console.log(rows2[0]);
     console.log('gameSettel', rows2[0].bestScore);
     res.status(200).json({ 
@@ -263,11 +273,11 @@ app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
     GROUP BY mode;`;
 
     let promiseArray = [];
-    promiseArray.push(connection.query(sql_mode1_rank, [memberId]));
-    promiseArray.push(connection.query(sql_mode2_rank, [memberId]));
-    promiseArray.push(connection.query(sql_mode3_rank, [memberId]));
-    promiseArray.push(connection.query(sql_allmode_averageTime, [memberId]));
-    promiseArray.push(connection.query(sql_allmode_playerTimes, [memberId]));
+    promiseArray.push(promisePool.query(sql_mode1_rank, [memberId]));
+    promiseArray.push(promisePool.query(sql_mode2_rank, [memberId]));
+    promiseArray.push(promisePool.query(sql_mode3_rank, [memberId]));
+    promiseArray.push(promisePool.query(sql_allmode_averageTime, [memberId]));
+    promiseArray.push(promisePool.query(sql_allmode_playerTimes, [memberId]));
 
     Promise.all(promiseArray)
     .then(results => {
