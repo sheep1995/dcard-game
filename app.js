@@ -106,7 +106,7 @@ app.get('/member/:memberId', asyncHandler(async(req, res) => {
             break;
         }
         case '3': {
-            sql = "SELECT MIN(seconds) FROM GameRecord WHERE memberId = ? AND mode = ?"
+            sql = "SELECT MIN(seconds) FROM GameRecord WHERE memberId = ? AND mode = ? AND score >= 2000;"
             break;
         }
         default: {
