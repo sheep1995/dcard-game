@@ -1,0 +1,67 @@
+sudo apt update
+sudo apt install nginx
+sudo apt-get install git-all (so long)
+
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash (重開)
+
+nvm ls-remote --lts
+nvm install 18.18.2
+node -v
+
+git clone https://github.com/sheep1995/dcard-game.git
+cd dcard-game
+npm install
+npm run start / node app.js
+
+cd
+cat /etc/nginx/sites-available/default
+default upload
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    root /var/www/html;
+
+    index index.html index.htm index.nginx-debian.html;
+    server_name _;
+
+    location /api {
+        proxy_pass http://localhost:3000/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+sudo mv default /etc/nginx/sites-available/default
+sudo nginx -t
+sudo systemctl restart nginx
+test
+
+cd
+npm install -g pm2
+cd dcard-game
+pm2 start index.js
+
+
+----------------------------- db
+sammy
+n3Zr=[D*xharJk$A
+
+gcloud sql connect acme-db -u [user]
+mysql> use [db];
+mysql> show tables;
+
+mysql> CREATE TABLE UserData (memberId varchar(99) UNIQUE, createTime TIMESTAMP, bomb INT, controller INT, slingshot INT, marble INT, coin INT );
+mysql> INSERT INTO UserData VALUES ('test-member-01', CURRENT_TIMESTAMP, 0, 0, 0, 0, 0);
+mysql> SELECT * FROM UserData;
+
+mysql> CREATE TABLE GameRecord (roundId varchar(99) UNIQUE, memberId varchar(99), createTime TIMESTAMP, mode INT, score INT, seconds INT);
+mysql> INSERT INTO GameRecord VALUES ('game-0001', 'test-member-01', CURRENT_TIMESTAMP, 1, 2000, 100);
+DROP TABLE table_name ;
+
+------------------------
+
