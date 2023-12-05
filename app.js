@@ -191,7 +191,8 @@ app.post('/member/:memberId/gameSettle', asyncHandler(async(req, res) => {
             sql = `SELECT MIN(seconds) AS bestScore
             FROM GameRecord
             WHERE memberId = ?
-            AND mode = ?`
+            AND mode = ?
+            AND score >= 2000`
             break;
         }
             
