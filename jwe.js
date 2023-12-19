@@ -1,4 +1,6 @@
-require('dotenv').config()
+require('dotenv').config({
+    path: path.resolve(__dirname, `${process.env.NODE_ENV}.env`)
+})
 const jose = require('jose')
 
 module.exports = {
