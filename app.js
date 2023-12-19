@@ -31,7 +31,7 @@ const asyncHandler = fn => async(req, res, next) => {
 };
 
 app.get('', (req, res) => {
-    res.send(`Dcard-game-server: ${process.env.DB_NAME}`)
+    res.send(`Dcard-game-server: ${process.env.NODE_ENV}`)
 })
 
 app.get('/login', asyncHandler(async(req, res) => {
