@@ -43,10 +43,22 @@ app.get('/login', asyncHandler(async(req, res) => {
         })
         return 1;
     }
-    const { memberId, exp} = await jwe.decrypt(user);
+    
+    let jweDecrypt;
+
+    try {
+        jweDecrypt = await jwe.decrypt(user);
+    } catch (error) {
+        res.status(403).send({
+            errorMessage: 'Invalid token'
+        })
+        return 1;
+    }
+    
+    const { memberId, exp} = jweDecrypt;
 
     if(memberId == undefined){
-        res.status(400).send({
+        res.status(403).send({
             errorMessage: 'Invalid token'
         })
         return 1;
