@@ -267,7 +267,7 @@ app.get('/member/:memberId/ranking', asyncHandler(async(req, res) => {
         SELECT
           memberId,
           MIN(seconds) AS min_time,
-          DENSE_RANK() OVER (ORDER BY MIN(seconds) DESC) AS user_rank
+          DENSE_RANK() OVER (ORDER BY MIN(seconds) ASC) AS user_rank
         FROM GameRecord
         WHERE mode = 3
         AND score >= 2000
